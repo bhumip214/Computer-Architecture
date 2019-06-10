@@ -79,4 +79,9 @@ void cpu_run(struct cpu *cpu)
 void cpu_init(struct cpu *cpu)
 {
   // TODO: Initialize the PC and other special registers
+  cpu->PC = 0;
+
+  //memset() is used to fill a block of memory with a particular value.
+  memset(cpu->registers, 0, 8 * sizeof(unsigned char));
+  memset(cpu->ram, 0, 256 * sizeof(unsigned char));
 }
