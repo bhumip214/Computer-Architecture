@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
   if (argc != 2)
   {
-    fprintf(stderr, "usage: comp filename\n");
+    fprintf(stderr, "Usage: ls8 path/filename.ls8\n");
     exit(1);
   }
   struct cpu cpu;

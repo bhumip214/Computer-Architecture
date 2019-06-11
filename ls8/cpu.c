@@ -52,12 +52,11 @@ void cpu_load(struct cpu *cpu, char *filename)
     exit(1);
   }
 
-  // TODO: Replace this with something less hard-coded
   while (fgets(line, 1024, fp) != NULL)
   { // not EOF
     char *endptr;
 
-    unsigned char v = strtoul(line, &endptr, 10);
+    unsigned char v = strtoul(line, &endptr, 2);
 
     if (endptr == line)
     {
@@ -68,7 +67,6 @@ void cpu_load(struct cpu *cpu, char *filename)
     cpu->ram[address] = v;
     address++;
   }
-
   fclose(fp);
 }
 
@@ -81,6 +79,7 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
   {
   case ALU_MUL:
     // TODO
+    cpu->registers[regA] *= cpu->registers[regB];
     break;
 
     // TODO: implement more ALU ops
@@ -110,6 +109,11 @@ void cpu_run(struct cpu *cpu)
     // 6. Move the PC to the next instruction.
     case LDI:
       cpu->registers[operandA] = operandB;
+      cpu->PC += 3;
+      break;
+
+    case MUL:
+      alu(cpu, ALU_MUL, operandA, operandB);
       cpu->PC += 3;
       break;
 
