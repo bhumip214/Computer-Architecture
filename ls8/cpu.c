@@ -69,6 +69,21 @@ void alu(struct cpu *cpu, enum alu_op op, unsigned char regA, unsigned char regB
   case ALU_ADD:
     cpu->registers[regA] += cpu->registers[regB];
     break;
+
+  case ALU_CMP:
+    if (cpu->registers[regA] == cpu->registers[regB])
+    {
+      cpu->E = 1;
+    }
+    else if (cpu->registers[regA] < cpu->registers[regB])
+    {
+      cpu->L = 1;
+    }
+    else
+    {
+      cpu->G = 1;
+    }
+    break;
   }
 }
 
@@ -149,6 +164,10 @@ void cpu_run(struct cpu *cpu)
       next_pc = 0;
       break;
 
+    case CMP:
+      alu(cpu, ALU_CMP, operandA, operandB);
+      break;
+
     case HLT:
       running = 0;
       break;
@@ -169,8 +188,15 @@ void cpu_init(struct cpu *cpu)
 {
   // TODO: Initialize the PC and other special registers
   cpu->PC = 0;
+
   cpu->SP = 7;                    //The SP points at the value at the top of the stack (most recently pushed)
   cpu->registers[cpu->SP] = 0xF4; // The SP points at address `F4` if the stack is empty.
+
+  // Initialize Flags
+  cpu->FL = 0;
+  cpu->L = 0;
+  cpu->G = 0;
+  cpu->E = 0;
 
   //memset() is used to fill a block of memory with a particular value.
   memset(cpu->registers, 0, 8 * sizeof(unsigned char));

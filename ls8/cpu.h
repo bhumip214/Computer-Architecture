@@ -13,6 +13,11 @@ struct cpu
   unsigned char ram[256];
   // SP (stack pointer)
   unsigned char SP;
+  // Flags
+  unsigned char FL;
+  unsigned char L;
+  unsigned char G;
+  unsigned char E;
 };
 
 // ALU operations
@@ -20,7 +25,9 @@ enum alu_op
 {
   ALU_MUL,
   // Add more here
-  ALU_ADD
+  ALU_ADD,
+  // Sprint Challenge
+  ALU_CMP
 };
 
 // Instructions
@@ -38,6 +45,7 @@ enum alu_op
 #define POP 0b01000110
 #define CALL 0b01010000
 #define RET 0b00010001
+#define CMP 0b10100111
 
 // Function declarations
 
