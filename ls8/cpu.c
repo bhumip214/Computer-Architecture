@@ -168,6 +168,10 @@ void cpu_run(struct cpu *cpu)
       alu(cpu, ALU_CMP, operandA, operandB);
       break;
 
+    case JMP:
+      cpu->PC = cpu->registers[operandA];
+      break;
+
     case HLT:
       running = 0;
       break;
