@@ -169,7 +169,27 @@ void cpu_run(struct cpu *cpu)
       break;
 
     case JMP:
+      //Jump to the address stored in the given register.
       cpu->PC = cpu->registers[operandA];
+      next_pc = 0;
+      break;
+
+    case JEQ:
+      //If equal flag is set (true), jump to the address stored in the given register.
+      if (cpu->E == 1)
+      {
+        cpu->PC = cpu->registers[operandA];
+        next_pc = 0;
+      }
+      break;
+
+    case JNE:
+      //If E flag is clear (false, 0), jump to the address stored in the given register.
+      if (cpu->E == 0)
+      {
+        cpu->PC = cpu->registers[operandA];
+        next_pc = 0;
+      }
       break;
 
     case HLT:
