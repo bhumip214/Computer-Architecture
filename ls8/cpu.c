@@ -91,43 +91,43 @@ void cpu_run(struct cpu *cpu)
     operandA = cpu_ram_read(cpu, cpu->PC + 1);
     operandB = cpu_ram_read(cpu, cpu->PC + 2);
 
+    // >> bitwise opperator, shifts right
+    int next_pc = (IR >> 6) + 1;
+
     //printf("TRACE: %02X | IR: %02X operandA: %02X operandB: %02X |\n", cpu->PC, IR, operandA, operandB);
 
     // 4. switch() over it to decide on a course of action.
     switch (IR)
     {
       // 5. Do whatever the instruction should do according to the spec.
-      // 6. Move the PC to the next instruction.
     case LDI:
       cpu->registers[operandA] = operandB;
-      cpu->PC += 3;
       break;
 
     case MUL:
       alu(cpu, ALU_MUL, operandA, operandB);
-      cpu->PC += 3;
       break;
 
     case ADD:
       alu(cpu, ALU_ADD, operandA, operandB);
-      cpu->PC += 3;
       break;
 
     case PRN:
       printf("%d\n", cpu->registers[operandA]);
-      cpu->PC += 2;
       break;
 
     case PUSH:
-      cpu->registers[cpu->SP]--;                                    // decrement SP
-      cpu->ram[cpu->registers[cpu->SP]] = cpu->registers[operandA]; //Copy the value in given register to the address pointed to by `SP`.
-      cpu->PC += 2;
+      // decrement SP
+      cpu->registers[cpu->SP]--;
+      //Copy the value in given register to the address pointed to by `SP`.
+      cpu->ram[cpu->registers[cpu->SP]] = cpu->registers[operandA];
       break;
 
     case POP:
-      cpu->registers[operandA] = cpu->ram[cpu->registers[cpu->SP]]; //Copy the value from the address pointed to by `SP` to the given register.
-      cpu->registers[cpu->SP]++;                                    // increament SP
-      cpu->PC += 2;
+      //Copy the value from the address pointed to by `SP` to the given register.
+      cpu->registers[operandA] = cpu->ram[cpu->registers[cpu->SP]];
+      // increament SP
+      cpu->registers[cpu->SP]++;
       break;
 
     case CALL:
@@ -137,6 +137,7 @@ void cpu_run(struct cpu *cpu)
       cpu->ram[cpu->registers[cpu->SP]] = retaddr;
       // set the PC to the subroutine address
       cpu->PC = cpu->registers[operandA];
+      next_pc = 0;
       break;
 
     case RET:
@@ -145,17 +146,19 @@ void cpu_run(struct cpu *cpu)
       cpu->registers[cpu->SP]++;
       // Set pc to return addr
       cpu->PC = retaddr;
+      next_pc = 0;
       break;
 
     case HLT:
       running = 0;
-      cpu->PC += 1;
       break;
 
     default:
       printf("Unknown instruction %02x at address %02x\n", IR, cpu->PC);
       exit(1);
     }
+    // 6. Move the PC to the next instruction.
+    cpu->PC += next_pc;
   }
 }
 
